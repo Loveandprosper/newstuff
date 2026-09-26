@@ -2,7 +2,9 @@
 Full notes: memory/daily/2026-09-26.md
 
 ## Open items
-- Inbox cleanup (archive ~180 promos + spam flags) was running at end of day — check its result / Gmail.
+- Inbox cleanup: 412 promo/app threads archived (Sep 26 back to ~Aug 6). Older promos still in inbox; offer a second pass. No phishing found.
+- Security notices to confirm: Reddit password change (Sep 23), Netflix new device, link.com new login, Pinterest new device, Zapier password reset, unnamed Supabase app with Google access, Apollo/Runable connected to the Outlook account.
+- Vendor confirmation texts: options explained (one-tap text / Zapier+Twilio / Gmail email); waiting on how vendors map to cases, send time, option, sample vendors.
 - Confirm the 7 Google security alerts were all Mychael.
 - Morning routine is paused (tasks now live on the Command Center).
 
