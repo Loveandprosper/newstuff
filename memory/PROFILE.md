@@ -1,6 +1,6 @@
 # Profile: Mychael
 
-- Surgical tech, works at University Medical Center of El Paso (OR). Works Monday–Friday, shift starts 06:00; drive ≈20 min. Lives in El Paso, TX (America/Denver time).
+- Surgical tech, works at University Medical Center of El Paso (OR). Works Monday–Friday, shift 06:00–14:30; drive ≈20 min. Lives in El Paso, TX (America/Denver time).
 - New to coding and AI: wants plain-English explanations and extra options they might not know about.
 - Uses voice dictation a lot: expect transcription slips (e.g. "welding" = Well & Fit, "quick lunch" = quick launch).
 - Business: Well & Fit (wellandfit.us), an Amazon-affiliate site about gear for nurses and surgical techs. Business email bewellandfit@outlook.com (forwarded to Gmail).
