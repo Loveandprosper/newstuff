@@ -1,0 +1,16 @@
+{
+  "caseTypes": [
+    "Aneurysm Clippings",
+    "Tumor Resection",
+    "Aeos Microscope"
+  ],
+  "company": "Aesculap",
+  "name": "Anthony",
+  "notes": "Oversees Aesculap inventory, facilitates Aeos repair service.",
+  "order": 10,
+  "phone": "9153734772",
+  "surgeons": [
+    "Smith",
+    "Cotton"
+  ]
+}

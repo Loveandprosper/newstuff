@@ -1,0 +1,14 @@
+{
+  "caseTypes": [
+    "Spinal Fusion",
+    "Navigated Spinal Fusion"
+  ],
+  "company": "Depuy",
+  "name": "Stephen",
+  "notes": "Covers Marin (for now).  Approved through Vizient.",
+  "order": 40,
+  "phone": "9153099068",
+  "surgeons": [
+    "Marin"
+  ]
+}

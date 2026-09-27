@@ -1,0 +1,18 @@
+{
+  "caseTypes": [
+    "Navigation",
+    "Navigated Spinal Fusion"
+  ],
+  "company": "Medtronic Navigation, Medtronic Spine",
+  "name": "Jaime Campos",
+  "notes": "Covers the bulk of cases at UMC + Spine rep for medtronic.",
+  "order": 100,
+  "phone": "9158927540",
+  "surgeons": [
+    "Wang",
+    "Lee",
+    "Hooten",
+    "Marin",
+    "Smith"
+  ]
+}

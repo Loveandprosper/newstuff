@@ -1,0 +1,9 @@
+{
+  "category": "work",
+  "checked": true,
+  "createdAt": 1758556800000,
+  "note": "Zimmer Biomet ROSA robotic system — unresolved.",
+  "order": 1001,
+  "section": "done",
+  "title": "Fix ROSA external-drive read failure"
+}

@@ -1,0 +1,18 @@
+{
+  "caseTypes": [
+    "Navigation",
+    "Navigated Spinal Fusion"
+  ],
+  "company": "Medtronic Navigation",
+  "name": "Alvin",
+  "notes": "",
+  "order": 80,
+  "phone": "9153739570",
+  "surgeons": [
+    "Wang",
+    "Lee",
+    "Hooten",
+    "Marin",
+    "Smith"
+  ]
+}

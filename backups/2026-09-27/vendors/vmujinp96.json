@@ -1,0 +1,18 @@
+{
+  "caseTypes": [
+    "Craniotomy w/Tumor Resection",
+    "Thoracic Spinal Fusion",
+    "Thyroidectomy",
+    "Parathyroidectomy"
+  ],
+  "company": "NuVasive Neuro Monitoring",
+  "name": "Linda Aguilar",
+  "notes": "Go to for Nuvasive Neuro Monitor that isn't spine.",
+  "order": 120,
+  "phone": "9152569039",
+  "surgeons": [
+    "Cotton",
+    "Smith",
+    "Brochoff"
+  ]
+}

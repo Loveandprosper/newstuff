@@ -1,0 +1,22 @@
+{
+  "caseTypes": [
+    "Tumor Resection",
+    "Spinal Fusion",
+    "Whipple",
+    "Hepatectomy."
+  ],
+  "company": "Stryker Sales",
+  "name": "Michael",
+  "notes": "Oversees Stryker sales for Maestro, Malis Bipolar, Sonopet. Partner with Jon'l.",
+  "order": 1790535452198,
+  "phone": "9153280148",
+  "surgeons": [
+    "Cotton",
+    "Smith",
+    "Lee",
+    "Hooten",
+    "Wang",
+    "Silva",
+    "Toy"
+  ]
+}

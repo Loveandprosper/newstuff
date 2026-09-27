@@ -1,0 +1,16 @@
+{
+  "caseTypes": [
+    "ROSA DBS",
+    "ROSA SEEG",
+    "ROSA RNS"
+  ],
+  "company": "Zimmer Biomet ROSA",
+  "name": "Traeyce",
+  "notes": "POC of Rosa.",
+  "order": 200,
+  "phone": "4802448066",
+  "surgeons": [
+    "Cotton",
+    "Smith"
+  ]
+}

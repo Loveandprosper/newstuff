@@ -1,0 +1,14 @@
+{
+  "caseTypes": [
+    "Spinal Fusion",
+    "TLIF"
+  ],
+  "company": "EPT Spine",
+  "name": "Jose Lawerence",
+  "notes": "Specifically assigned to Dr. Wang.  Precision Spine + others.",
+  "order": 60,
+  "phone": "9154746209",
+  "surgeons": [
+    "Wang"
+  ]
+}

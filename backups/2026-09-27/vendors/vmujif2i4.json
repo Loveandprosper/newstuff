@@ -1,0 +1,16 @@
+{
+  "caseTypes": [
+    "Spinal Fusion",
+    "Thoracic Spinal Fusion",
+    "Cervical Spinal Fusion",
+    "TLIF"
+  ],
+  "company": "NuVasive, Globus",
+  "name": "Jay Moya",
+  "notes": "Exclusively covers Dr. Smith",
+  "order": 150,
+  "phone": "9154226947",
+  "surgeons": [
+    "Smith"
+  ]
+}

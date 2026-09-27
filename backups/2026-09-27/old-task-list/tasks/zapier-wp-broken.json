@@ -1,0 +1,9 @@
+{
+  "category": "wellandfit",
+  "checked": true,
+  "createdAt": 1758556800000,
+  "note": "Connection ID 66377046, currently broken.",
+  "order": 1004,
+  "section": "done",
+  "title": "Fix broken Zapier ↔ WordPress connection"
+}

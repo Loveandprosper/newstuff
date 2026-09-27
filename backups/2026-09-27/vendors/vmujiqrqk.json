@@ -1,0 +1,15 @@
+{
+  "caseTypes": [
+    "Craniotomy with Tumor Resection",
+    "Navigated  Spinal Fusion",
+    "Biopsy"
+  ],
+  "company": "Stryker Navigation",
+  "name": "Sam",
+  "notes": "Veteran rep for Stryker Navigation.",
+  "order": 190,
+  "phone": "9153099116",
+  "surgeons": [
+    "Cotton"
+  ]
+}

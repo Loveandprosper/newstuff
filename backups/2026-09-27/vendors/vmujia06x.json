@@ -1,0 +1,20 @@
+{
+  "caseTypes": [
+    "Spinal Fusion",
+    "Thoracic Spinal Fusion",
+    "Cervical Spinal Fusion",
+    "TLIF",
+    "XLIF",
+    "ALIF"
+  ],
+  "company": "NuVasive, Globus, Integra",
+  "name": "Carlos Ponte",
+  "notes": "Veteran Nuvasive rep as well as integra.",
+  "order": 160,
+  "phone": "9155393200",
+  "surgeons": [
+    "Lee",
+    "Hooten",
+    "Gasco"
+  ]
+}

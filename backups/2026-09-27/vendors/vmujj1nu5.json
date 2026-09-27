@@ -1,0 +1,13 @@
+{
+  "caseTypes": [
+    "DBS"
+  ],
+  "company": "Alpha Omega",
+  "name": "Rigo",
+  "notes": "Oversees Sneha",
+  "order": 30,
+  "phone": "4702958158",
+  "surgeons": [
+    "Smith"
+  ]
+}

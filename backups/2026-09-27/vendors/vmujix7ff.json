@@ -1,0 +1,13 @@
+{
+  "caseTypes": [
+    "DBS"
+  ],
+  "company": "Medtronic DBS",
+  "name": "Nicole Kuiper",
+  "notes": "Specializes in Medtronic DBS for Dr. Smith",
+  "order": 70,
+  "phone": "4324134091",
+  "surgeons": [
+    "Smith"
+  ]
+}

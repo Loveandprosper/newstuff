@@ -1,0 +1,15 @@
+{
+  "caseTypes": [
+    "OLIF",
+    "Spinal Fusion"
+  ],
+  "company": "NuVasive, Globus",
+  "name": "Adam Martin",
+  "notes": "Veteran rep for Nuvasive, usually goes to Surgical East.",
+  "order": 130,
+  "phone": "9154712225",
+  "surgeons": [
+    "Gasco",
+    "Hooten"
+  ]
+}

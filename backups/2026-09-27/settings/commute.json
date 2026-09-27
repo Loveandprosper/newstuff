@@ -1,0 +1,21 @@
+{
+  "driveMin": 20,
+  "earlyMin": 10,
+  "home": "10605 Kinross Ave, Apt D, El Paso, TX 79935",
+  "shiftEnd": "14:30",
+  "shiftStart": "06:00",
+  "starts": [
+    {
+      "addr": "10605 Kinross Ave, Apt D, El Paso, TX 79935",
+      "driveMin": 20,
+      "label": "Kinross"
+    },
+    {
+      "addr": "5113 McNutt Rd, Santa Teresa, NM 88008",
+      "driveMin": 30,
+      "label": "McNutt"
+    }
+  ],
+  "work": "University Medical Center of El Paso, 4815 Alameda Ave, El Paso, TX 79905",
+  "workLabel": "UMC El Paso"
+}

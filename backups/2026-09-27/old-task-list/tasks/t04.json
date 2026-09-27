@@ -1,0 +1,7 @@
+{
+  "checked": true,
+  "note": "Block is built; needs the real Storefront link once live, then manual paste per post (Zapier WP connection is broken).",
+  "order": 4,
+  "section": "done",
+  "title": "Add \"Shop My Storefront\" CTA block to all 12 posts"
+}

@@ -1,0 +1,7 @@
+{
+  "checked": true,
+  "note": "Likely FAT32/USB compatibility — unresolved as of mid-August.",
+  "order": 5,
+  "section": "done",
+  "title": "ROSA robotic system external-drive read failure"
+}

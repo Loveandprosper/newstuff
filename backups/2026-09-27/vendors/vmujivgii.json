@@ -1,0 +1,18 @@
+{
+  "caseTypes": [
+    "Navigation",
+    "Navigated Spinal Fusion"
+  ],
+  "company": "Medtronic Navigation",
+  "name": "Michael Miranda",
+  "notes": "Sakes rep for Medtronic as well.",
+  "order": 90,
+  "phone": "9154222591",
+  "surgeons": [
+    "Wang",
+    "Lee",
+    "Hooten",
+    "Marin",
+    "Smith"
+  ]
+}

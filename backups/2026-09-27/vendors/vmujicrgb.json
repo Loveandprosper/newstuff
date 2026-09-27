@@ -1,0 +1,20 @@
+{
+  "caseTypes": [
+    "Spinal Fusion",
+    "Thoracic Spinal Fusion",
+    "Cervical Spinal Fusion",
+    "TLIF",
+    "XLIF",
+    "ALIF"
+  ],
+  "company": "NuVasive, Globus",
+  "name": "Freddy Young",
+  "notes": "Covers majority of cases at UMC main.",
+  "order": 140,
+  "phone": "5756423940",
+  "surgeons": [
+    "Lee",
+    "Hooten",
+    "Cotton"
+  ]
+}

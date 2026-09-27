@@ -1,0 +1,7 @@
+{
+  "checked": true,
+  "note": "Some featured/in-article images show a placeholder instead of the real image; likely a lazy-loading plugin setting.",
+  "order": 3,
+  "section": "done",
+  "title": "Fix lazy-load placeholder GIF issue"
+}

@@ -1,0 +1,15 @@
+{
+  "caseTypes": [
+    "Spinal Fusion",
+    "Navigated Spinal Fusion"
+  ],
+  "company": "Met1, Acuity, Icotech",
+  "name": "Adrian",
+  "notes": "Covers 3 big vendors.  \nMet1, Acuity, ICOTECH",
+  "order": 110,
+  "phone": "9153731077",
+  "surgeons": [
+    "Lee",
+    "Hooten"
+  ]
+}

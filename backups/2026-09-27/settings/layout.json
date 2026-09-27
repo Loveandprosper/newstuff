@@ -1,0 +1,16 @@
+{
+  "off": [
+    "s-tasks",
+    "s-fit",
+    "s-week",
+    "s-cal",
+    "s-cases",
+    "s-mail",
+    "s-pipe",
+    "s-bwf",
+    "s-wf",
+    "s-vend",
+    "s-notes"
+  ],
+  "work": null
+}

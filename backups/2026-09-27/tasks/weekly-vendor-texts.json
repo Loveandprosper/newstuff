@@ -1,0 +1,10 @@
+{
+  "category": "work",
+  "done": false,
+  "due": "2026-09-27",
+  "note": "Vendor confirmations → 📅 Week ahead. Next one appears automatically when you tick this off.",
+  "order": 5,
+  "priority": "med",
+  "repeat": "w1",
+  "title": "Send week-ahead vendor texts"
+}

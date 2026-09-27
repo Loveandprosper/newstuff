@@ -1,0 +1,7 @@
+{
+  "checked": true,
+  "note": "One fixes oversized product images, one fixes the skinny blog post width. Sent Sep 22, not yet confirmed live.",
+  "order": 2,
+  "section": "done",
+  "title": "Confirm the two CSS snippets were pasted into Additional CSS"
+}

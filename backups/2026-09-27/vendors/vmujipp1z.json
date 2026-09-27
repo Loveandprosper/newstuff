@@ -1,0 +1,15 @@
+{
+  "caseTypes": [
+    "Craniotomy with Tumor Resection",
+    "Navigated  Spinal Fusion",
+    "Biopsy"
+  ],
+  "company": "Stryker Navigation",
+  "name": "Isaiah",
+  "notes": "POC for Stryker Navigation.,",
+  "order": 180,
+  "phone": "9156038348",
+  "surgeons": [
+    "Cotton"
+  ]
+}

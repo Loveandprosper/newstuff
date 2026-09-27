@@ -1,0 +1,13 @@
+{
+  "caseTypes": [],
+  "company": "Storz",
+  "name": "Armando",
+  "notes": "Covers all of Storz, used mainly for the towers.",
+  "order": 170,
+  "phone": "9152636224",
+  "surgeons": [
+    "Cotton",
+    "Brochoff",
+    "Smith"
+  ]
+}
