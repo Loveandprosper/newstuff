@@ -8,3 +8,7 @@
 - Workout rotation (not tied to weekdays): Arms → Legs (quads) → Chest → Back → Glutes & hamstrings → Shoulders → repeat.
 - Prefers archiving over deleting email; wants spam flagged for review, not acted on. Holding off on Gmail filters for now.
 - Never store patient names, MRNs or other patient identifiers.
+- Prefers making small changes themself via the Command Center ⚙️ Settings to save Claude credits; batch requests when asking Claude.
+- Chosen look: OR Monitor (dark teal, heartbeat line).
+- Cases are managed only in the Calendar block; vendor reps matched by surgeon and/or case type, with learned suggestions.
+- Backups: 1st & 15th to this private repo (backups/).
