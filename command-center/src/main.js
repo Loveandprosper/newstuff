@@ -13,6 +13,7 @@ import { mountWf } from './pages/wf.js';
 import { mountInbox } from './pages/inbox.js';
 import { initBadges } from './badges.js';
 import { initAsk } from './ask.js';
+import { migrateRunOnce } from './migrate.js';
 
 // Page modules register themselves on import (mount* imported so the bundler includes them).
 void [mountHome, mountWork, mountCards, mountHealth, mountWf, mountInbox];
@@ -24,3 +25,5 @@ initSearch();
 initTheme();
 initShift();
 initAsk();
+// One-time data migration (guarded; does nothing offline or if already done).
+migrateRunOnce().catch(() => {});
