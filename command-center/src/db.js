@@ -22,14 +22,17 @@ function dbAssertNoPhi(value, path = '') {
 function dbCheckPath(coll, id) {
   for (const [what, v] of [['collection', coll], ['id', id]]) {
     if (typeof v !== 'string' || !/^[A-Za-z0-9_.~:@+-]{1,200}$/.test(v) || v === '.' || v === '..') {
-      throw new TypeError('Invalid ' + what + ' for database path: ' + String(v));
+      const err = new TypeError('Invalid ' + what + ' for database path: ' + String(v));
+      err.dbPermanent = true;
+      throw err;
     }
   }
 }
 
-// Errors retrying can never fix (bad arguments, full quota). Anything else is transient.
+// Errors retrying can never fix (bad path, bad arguments, full quota). Anything else
+// (including a network TypeError from fetch) is transient and gets queued.
 function dbIsPermanent(err) {
-  if (err instanceof TypeError) return true;
+  if (err && err.dbPermanent === true) return true;
   const code = err && err.code;
   return code === 'invalid_argument' || code === 'quota_exceeded' || code === 'transform_error';
 }
@@ -133,9 +136,11 @@ export function createDb(backendPromise, opts = {}) {
         return s.exists ? snap(s) : null;
       } catch (e) { return { offline: true }; }
     },
-    async put(coll, doc) {
+    // opts.keepUpdatedAt (migration only): keep a supplied updated_at instead of stamping now.
+    async put(coll, doc, putOpts = {}) {
       dbAssertNoPhi(doc);
-      const full = { ...doc, id: doc.id || newId(), updated_at: now() };
+      const stamp = putOpts.keepUpdatedAt && doc.updated_at ? doc.updated_at : now();
+      const full = { ...doc, id: doc.id || newId(), updated_at: stamp };
       return write({ op: 'put', coll, id: full.id, doc: full }, full);
     },
     async remove(coll, id) {

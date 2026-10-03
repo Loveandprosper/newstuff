@@ -48,10 +48,22 @@ function render(id) {
       routerMounted = page ? id : null;
       el.innerHTML = '';
       if (page) {
+        const signal = routerCtrl ? routerCtrl.signal : undefined;
+        // A broken page must not break navigation or leave a blank screen.
+        const fail = (e) => {
+          if (signal && signal.aborted) return;
+          if (typeof console !== 'undefined') console.warn('Page ' + id + ' failed to load', e);
+          el.innerHTML = '';
+          const p = document.createElement('p');
+          p.className = 'pg-error';
+          p.setAttribute('role', 'alert');
+          p.textContent = "Couldn't load this tab";
+          el.appendChild(p);
+        };
         try {
-          const r = page.mount(el, { signal: routerCtrl ? routerCtrl.signal : undefined });
-          if (r && typeof r.catch === 'function') r.catch(() => {});
-        } catch (e) { /* a broken page must not break navigation */ }
+          const r = page.mount(el, { signal });
+          if (r && typeof r.catch === 'function') r.catch(fail);
+        } catch (e) { fail(e); }
       }
       else el.textContent = 'Coming soon';
       document.title = (page ? page.title : id) + ' · Command Center';

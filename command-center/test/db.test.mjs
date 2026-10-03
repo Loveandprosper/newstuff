@@ -159,3 +159,30 @@ test('flush stops at first transient failure and keeps the rest', async () => {
   assert.equal(r.remaining, 1);
   assert.deepEqual(JSON.parse(storage.getItem('cc.queue')).map((e) => e.id), ['c']);
 });
+
+test('a generic TypeError from the backend (e.g. fetch network failure) is queued, not dropped', async () => {
+  const storage = memStorage();
+  let down = true;
+  const store = new Map();
+  const backend = { doc: (path) => ({
+    set: async (d) => { if (down) throw new TypeError('Failed to fetch'); store.set(path, d); },
+    delete: async () => {},
+    get: async () => ({ exists: store.has(path), id: path.split('/').pop(), data: () => store.get(path) }),
+  }) };
+  const db = createDb(Promise.resolve(backend), { storage });
+  const r = await db.put('tasks', { id: 'n1', title: 'x' });
+  assert.equal(r.queued, true);
+  assert.equal(JSON.parse(storage.getItem('cc.queue')).length, 1);
+  down = false;
+  const f = await db.flush();
+  assert.equal(f.flushed, 1);
+  assert.equal(store.get('tasks/n1').title, 'x');
+});
+
+test('put keeps a supplied updated_at only with keepUpdatedAt', async () => {
+  const { db } = setup();
+  const a = await db.put('tasks', { id: 'a', updated_at: '2020-01-01T00:00:00.000Z' });
+  assert.notEqual(a.updated_at, '2020-01-01T00:00:00.000Z');
+  const b = await db.put('tasks', { id: 'b', updated_at: '2020-01-01T00:00:00.000Z' }, { keepUpdatedAt: true });
+  assert.equal(b.updated_at, '2020-01-01T00:00:00.000Z');
+});

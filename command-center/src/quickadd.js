@@ -94,6 +94,7 @@ export function initQuickAdd() {
   if (!fab || !dlg) return;
   let state = { kind: null, title: '', category: undefined, when: undefined };
   let kindChosen = false;
+  let saving = false; // double-tap guard: Save is ignored and disabled while a save runs
 
   const render = () => {
     dlg.innerHTML =
@@ -113,21 +114,30 @@ export function initQuickAdd() {
     if (!el) return;
     el.textContent = [state.category, state.when].filter(Boolean).join(' · ');
     const save = dlg.querySelector('#qa-save');
-    if (save) save.disabled = !state.kind || !state.title;
+    if (save) save.disabled = saving || !state.kind || !state.title;
   };
   const doSave = async () => {
+    if (saving) return;
     const status = dlg.querySelector('#qa-status');
+    const save = dlg.querySelector('#qa-save');
     if (!state.kind || !state.title) { status.textContent = 'Type something first'; return; }
+    saving = true;
+    if (save) save.disabled = true;
     try {
       const r = await quickAddSave(state);
       status.textContent = r && r.queued ? 'Saved offline, will sync' : 'Saved';
       setTimeout(() => dlg.close(), 400);
-    } catch (err) { status.textContent = 'Could not save: ' + err.message; }
+    } catch (err) {
+      status.textContent = 'Could not save: ' + err.message;
+      saving = false;
+      meta();
+    }
   };
 
   fab.addEventListener('click', () => {
     state = { kind: null, title: '', category: undefined, when: undefined };
     kindChosen = false;
+    saving = false;
     render();
     dlg.showModal();
     dlg.querySelector('#qa-text').focus();

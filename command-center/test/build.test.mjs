@@ -47,5 +47,8 @@ test('accent and text tokens have >= 4.5:1 contrast on --surface in both themes'
       assert.ok(v, `${theme} --${k} defined`);
       assert.ok(ratio(v, surface) >= 4.5, `${theme} --${k} ${v} on ${surface} = ${ratio(v, surface).toFixed(2)}`);
     }
+    const bg = get(block, 'badge-bg'); const fg = get(block, 'badge-text');
+    assert.ok(bg && fg, `${theme} badge tokens defined`);
+    assert.ok(ratio(fg, bg) >= 4.5, `${theme} badge ${fg} on ${bg} = ${ratio(fg, bg).toFixed(2)}`);
   }
 });

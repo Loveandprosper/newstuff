@@ -1,5 +1,6 @@
 // Module entry. Later tasks add `import { x } from './x.js'` lines here.
-import { startRouter } from './router.js';
+import { startRouter, navigate, currentRoute } from './router.js';
+import { db } from './db.js';
 import { initTabs } from './tabs.js';
 import { initQuickAdd } from './quickadd.js';
 import { initSearch } from './search.js';
@@ -16,6 +17,7 @@ import { initAsk } from './ask.js';
 import { migrateRunOnce } from './migrate.js';
 
 // Page modules register themselves on import (mount* imported so the bundler includes them).
+// LOAD-BEARING: removing this line drops the page modules from the bundle; do not delete.
 void [mountHome, mountWork, mountCards, mountHealth, mountWf, mountInbox];
 initTabs();
 initBadges();
@@ -27,3 +29,14 @@ initShift();
 initAsk();
 // One-time data migration (guarded; does nothing offline or if already done).
 migrateRunOnce().catch(() => {});
+
+// Drain the offline write queue at startup, when back online, and when the app is shown again.
+// If anything synced, re-render the current tab so it shows the saved data.
+function mainFlushQueue() {
+  db.flush().then((r) => {
+    if (r && r.flushed > 0 && currentRoute()) navigate(currentRoute());
+  }).catch((e) => console.warn('Sync of offline changes failed', e));
+}
+mainFlushQueue();
+window.addEventListener('online', mainFlushQueue);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') mainFlushQueue(); });
