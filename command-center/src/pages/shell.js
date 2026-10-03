@@ -11,7 +11,9 @@ export function shellDate(now = new Date()) {
 }
 
 export function shellSection(id, title, body) {
-  return '<section class="pg-sec" data-section="' + esc(id) + '"><h2>' + esc(title) + '</h2>' + body + '</section>';
+  const bid = 'pgb-' + esc(id);
+  return '<section class="pg-sec" data-section="' + esc(id) + '"><h2 class="pg-h"><button type="button" class="pg-hd" aria-expanded="true" aria-controls="' + bid + '">' +
+    '<span class="pg-ind" aria-hidden="true">▾</span> ' + esc(title) + '</button></h2><div class="pg-body" id="' + bid + '">' + body + '</div></section>';
 }
 
 export function shellPlaceholder(text) {

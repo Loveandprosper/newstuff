@@ -14,6 +14,7 @@ import { mountWf } from './pages/wf.js';
 import { mountInbox } from './pages/inbox.js';
 import { initBadges } from './badges.js';
 import { initAsk } from './ask.js';
+import { initLayout } from './layout.js';
 import { migrateRunOnce } from './migrate.js';
 
 // Page modules register themselves on import (mount* imported so the bundler includes them).
@@ -27,6 +28,7 @@ initSearch();
 initTheme();
 initShift();
 initAsk();
+initLayout();
 // One-time data migration (guarded; does nothing offline or if already done).
 migrateRunOnce().catch(() => {});
 
