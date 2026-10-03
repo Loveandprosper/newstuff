@@ -56,3 +56,15 @@ body {
   #tabs { top: 0; right: auto; bottom: auto; width: 200px; flex-direction: column; }
   #fab { bottom: 24px; }
 }
+
+/* Tab buttons */
+.tab {
+  flex: 1; min-height: var(--tap); display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 2px; padding: 6px 2px; border: 0; background: none;
+  color: var(--muted); font: inherit; font-size: 12px; cursor: pointer;
+}
+.tab[aria-current="page"] { color: var(--tab-accent, var(--accent)); font-weight: 700; }
+.tab:focus-visible { outline: 2px solid var(--tab-accent, var(--accent)); outline-offset: -2px; }
+@media (min-width: 900px) {
+  .tab { flex: none; flex-direction: row; justify-content: flex-start; gap: 12px; padding: 10px 16px; font-size: 16px; }
+}
