@@ -97,7 +97,7 @@ export function initQuickAdd() {
 
   const render = () => {
     dlg.innerHTML =
-      '<form method="dialog" class="qa-form">' +
+      '<form class="qa-form">' +
       '<label for="qa-text">Quick add</label>' +
       '<input id="qa-text" type="text" autocomplete="off" placeholder="e.g. call Stryker rep Tue" value="' + qaEsc(state.title) + '">' +
       '<div class="qa-chips" role="group" aria-label="Type">' +
@@ -115,6 +115,16 @@ export function initQuickAdd() {
     const save = dlg.querySelector('#qa-save');
     if (save) save.disabled = !state.kind || !state.title;
   };
+  const doSave = async () => {
+    const status = dlg.querySelector('#qa-status');
+    if (!state.kind || !state.title) { status.textContent = 'Type something first'; return; }
+    try {
+      const r = await quickAddSave(state);
+      status.textContent = r && r.queued ? 'Saved offline, will sync' : 'Saved';
+      setTimeout(() => dlg.close(), 400);
+    } catch (err) { status.textContent = 'Could not save: ' + err.message; }
+  };
+
   fab.addEventListener('click', () => {
     state = { kind: null, title: '', category: undefined, when: undefined };
     kindChosen = false;
@@ -139,12 +149,8 @@ export function initQuickAdd() {
     } else if (e.target.id === 'qa-cancel') {
       dlg.close();
     } else if (e.target.id === 'qa-save') {
-      const status = dlg.querySelector('#qa-status');
-      try {
-        const r = await quickAddSave(state);
-        status.textContent = r && r.queued ? 'Saved offline, will sync' : 'Saved';
-        setTimeout(() => dlg.close(), 400);
-      } catch (err) { status.textContent = 'Could not save: ' + err.message; }
+      doSave();
     }
   });
+  dlg.addEventListener('submit', (e) => { e.preventDefault(); doSave(); });
 }

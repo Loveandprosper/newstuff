@@ -80,3 +80,4 @@ body {
 #search-results { position: absolute; left: 0; right: 0; top: 100%; background: var(--surface, #1b1b1f); max-height: 50vh; overflow: auto; z-index: 5; }
 .search-hit { padding: 12px 16px; min-height: var(--tap); font-size: 14px; }
 .search-coll { font-size: 12px; opacity: .8; text-transform: uppercase; margin-right: 6px; }
+#topbar { position: relative; }
