@@ -6,11 +6,13 @@ function fakeBackend() {
   const store = new Map();
   const state = { fail: false };
   const guard = () => { if (state.fail) return Promise.reject({ code: 'unavailable', message: 'down' }); };
-  const docRef = (path) => ({
+  const chk = (path) => { if (/bad id/.test(path)) throw new TypeError('bad path'); if (state.rejectId && path.endsWith('/' + state.rejectId)) return Promise.reject({ code: 'invalid_argument', message: 'no' }); };
+  const chk0 = (path) => { if (/bad id/.test(path)) throw new TypeError('bad path'); };
+  const docRef = (path) => { chk0(path); return {
     get: async () => { await guard(); const d = store.get(path); return { id: path.split('/').pop(), exists: d !== undefined, data: () => d }; },
-    set: async (data) => { await guard(); store.set(path, structuredClone(data)); },
-    delete: async () => { await guard(); store.delete(path); },
-  });
+    set: async (data) => { await guard(); await chk(path); store.set(path, structuredClone(data)); },
+    delete: async () => { await guard(); await chk(path); store.delete(path); },
+  }; };
   const collection = (name) => ({
     get: async () => {
       await guard();
@@ -89,4 +91,71 @@ test('works without storage (throwing localStorage)', async () => {
   const bad = { getItem() { throw new Error('x'); }, setItem() { throw new Error('x'); } };
   const db = createDb(Promise.resolve(null), { storage: bad });
   assert.equal((await db.put('tasks', { title: 'z' })).offline, true);
+});
+
+test('bad id or collection is rejected and not queued', async () => {
+  const { db, storage } = setup();
+  await assert.rejects(db.put('tasks', { id: 'bad id' }), TypeError);
+  await assert.rejects(db.remove('tasks', 'a/b'), TypeError);
+  await assert.rejects(db.put('ta sks', { id: 'x' }), TypeError);
+  assert.equal(storage.getItem('cc.queue'), null);
+});
+
+test('non-transient backend error rejects the write instead of queueing', async () => {
+  const { db, state, storage } = setup();
+  state.rejectId = 'p1';
+  await assert.rejects(db.put('tasks', { id: 'p1' }), (e) => e.code === 'invalid_argument');
+  assert.equal(storage.getItem('cc.queue'), null);
+});
+
+test('flush drops a poison entry and still applies later ones', async () => {
+  const { db, state, storage } = setup();
+  state.fail = true;
+  await db.put('tasks', { id: 'p1', title: 'poison' });
+  await db.put('tasks', { id: 'ok', title: 'fine' });
+  state.fail = false;
+  state.rejectId = 'p1';
+  const r = await db.flush();
+  assert.equal(r.flushed, 1);
+  assert.equal(r.remaining, 0);
+  assert.equal(JSON.parse(storage.getItem('cc.queue')).length, 0);
+  assert.equal((await db.get('tasks', 'ok')).title, 'fine');
+  assert.equal(await db.get('tasks', 'p1'), null);
+});
+
+test('newer put is not overwritten by an older queued put', async () => {
+  const { db, state } = setup();
+  state.fail = true;
+  await db.put('tasks', { id: 't1', title: 'old' });
+  state.fail = false;
+  const r = await db.put('tasks', { id: 't1', title: 'new' });
+  assert.notEqual(r.offline, true);
+  assert.equal((await db.get('tasks', 't1')).title, 'new');
+  assert.equal((await db.flush()).flushed, 0);
+  assert.equal((await db.get('tasks', 't1')).title, 'new');
+});
+
+test('write behind a queue stays queued while backend is down', async () => {
+  const { db, state, storage } = setup();
+  state.fail = true;
+  await db.put('tasks', { id: 'a', title: '1' });
+  const r = await db.put('tasks', { id: 'b', title: '2' });
+  assert.equal(r.offline, true);
+  assert.equal(JSON.parse(storage.getItem('cc.queue')).length, 2);
+});
+
+test('flush stops at first transient failure and keeps the rest', async () => {
+  const { db, state, storage, store } = setup();
+  state.fail = true;
+  await db.put('tasks', { id: 'a', title: '1' });
+  await db.put('tasks', { id: 'b', title: '2' });
+  await db.put('tasks', { id: 'c', title: '3' });
+  state.fail = false;
+  let n = 0;
+  const origSet = store.set.bind(store);
+  store.set = (k, v) => { if (++n === 2) { state.fail = true; } return origSet(k, v); };
+  const r = await db.flush();
+  assert.equal(r.flushed, 2);
+  assert.equal(r.remaining, 1);
+  assert.deepEqual(JSON.parse(storage.getItem('cc.queue')).map((e) => e.id), ['c']);
 });

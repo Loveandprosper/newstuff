@@ -18,6 +18,22 @@ function dbAssertNoPhi(value, path = '') {
   }
 }
 
+// Segments allowed by the db path grammar (letters, digits, _ - . ~ : @ +).
+function dbCheckPath(coll, id) {
+  for (const [what, v] of [['collection', coll], ['id', id]]) {
+    if (typeof v !== 'string' || !/^[A-Za-z0-9_.~:@+-]{1,200}$/.test(v) || v === '.' || v === '..') {
+      throw new TypeError('Invalid ' + what + ' for database path: ' + String(v));
+    }
+  }
+}
+
+// Errors retrying can never fix (bad arguments, full quota). Anything else is transient.
+function dbIsPermanent(err) {
+  if (err instanceof TypeError) return true;
+  const code = err && err.code;
+  return code === 'invalid_argument' || code === 'quota_exceeded' || code === 'transform_error';
+}
+
 function dbNewId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
@@ -49,34 +65,56 @@ export function createDb(backendPromise, opts = {}) {
     else await ref.set(e.doc);
   };
 
-  // Try a write now; on any failure queue it and report offline.
-  const write = async (entry, result) => {
+  // Entries and own ids are tracked so a caller can learn its write was dropped.
+  let seq = 0;
+
+  const flushNow = async () => {
+    const q = readQueue();
+    if (!q.length) return { flushed: 0, remaining: 0, dropped: [] };
     const b = await backend();
-    if (b) {
-      try { await apply(b, entry); return result; } catch (e) { /* fall through to queue */ }
+    if (!b) return { flushed: 0, remaining: q.length, dropped: [] };
+    let consumed = 0;
+    const dropped = [];
+    let flushed = 0;
+    for (const e of q) {
+      try { await apply(b, e); flushed++; } catch (err) {
+        if (!dbIsPermanent(err)) break;
+        dropped.push(e.seq); // poison entry: retrying can never succeed
+      }
+      consumed++;
     }
-    enqueue(entry);
-    return { offline: true, queued: true, ...(entry.doc ? { doc: entry.doc } : {}) };
+    // Re-read so entries queued while flushing are kept.
+    const rest = readQueue().slice(consumed);
+    writeQueue(rest);
+    return { flushed, remaining: rest.length, dropped };
   };
 
   let flushing = null;
   const flush = () => {
     if (flushing) return flushing;
-    flushing = (async () => {
-      const q = readQueue();
-      if (!q.length) return { flushed: 0, remaining: 0 };
-      const b = await backend();
-      if (!b) return { flushed: 0, remaining: q.length };
-      let done = 0;
-      for (const e of q) {
-        try { await apply(b, e); done++; } catch (err) { break; }
-      }
-      // Re-read so entries queued while flushing are kept.
-      const rest = readQueue().slice(done);
-      writeQueue(rest);
-      return { flushed: done, remaining: rest.length };
-    })().finally(() => { flushing = null; });
+    flushing = flushNow().finally(() => { flushing = null; });
     return flushing;
+  };
+
+  // Writes keep their order: if anything is already queued, append and flush.
+  const write = async (entry, result) => {
+    dbCheckPath(entry.coll, entry.id);
+    entry.seq = ++seq + '-' + Date.now();
+    if (!readQueue().length) {
+      const b = await backend();
+      if (b) {
+        try { await apply(b, entry); return result; } catch (e) {
+          if (dbIsPermanent(e)) throw e;
+        }
+      }
+      enqueue(entry);
+    } else {
+      enqueue(entry);
+      const r = await flush();
+      if (r.dropped.includes(entry.seq)) throw new Error('Write rejected by the database');
+      if (!readQueue().some((x) => x.seq === entry.seq)) return result;
+    }
+    return { offline: true, queued: true, ...(entry.doc ? { doc: entry.doc } : {}) };
   };
 
   const snap = (s) => ({ ...s.data(), id: s.id });
