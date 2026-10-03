@@ -81,3 +81,6 @@ body {
 .search-hit { padding: 12px 16px; min-height: var(--tap); font-size: 14px; }
 .search-coll { font-size: 12px; opacity: .8; text-transform: uppercase; margin-right: 6px; }
 #topbar { position: relative; }
+.topbtn { min-height: var(--tap); min-width: var(--tap); padding: 0 12px; font-size: 14px; background: var(--surface, #1b1b1f); color: inherit; border: 1px solid currentColor; border-radius: 8px; cursor: pointer; }
+#topbar { display: flex; align-items: center; gap: 8px; }
+#topbar #search { flex: 1; min-width: 0; }
