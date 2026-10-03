@@ -31,7 +31,9 @@ export function layToggle(list, id) {
 
 function layClean(d) {
   const arr = (v) => (Array.isArray(v) ? v.filter((x) => typeof x === 'string') : []);
-  return { order: arr(d && d.order), hidden: arr(d && d.hidden), collapsed: arr(d && d.collapsed) };
+  const out = { order: arr(d && d.order), hidden: arr(d && d.hidden), collapsed: arr(d && d.collapsed) };
+  if (d && typeof d.updated_at === 'string') out.updated_at = d.updated_at;
+  return out;
 }
 
 export async function layLoad(pageId, store = db, storage) {
@@ -43,14 +45,17 @@ export async function layLoad(pageId, store = db, storage) {
     const r = await store.get('settings', 'layout-' + pageId);
     if (r && !r.offline && (r.order || r.hidden || r.collapsed)) remote = layClean(r);
   } catch (e) { /* offline */ }
-  const out = remote || local || layClean(null);
-  if (remote) { try { ls && ls.setItem(LAY_KEY + pageId, JSON.stringify(out)); } catch (e) { /* ignore */ } }
+  // Prefer whichever copy is newer (a queued db write may not have flushed yet).
+  const useRemote = remote && (!local || String(remote.updated_at || '') > String(local.updated_at || ''));
+  const out = (useRemote ? remote : local) || layClean(null);
+  if (useRemote) { try { ls && ls.setItem(LAY_KEY + pageId, JSON.stringify(out)); } catch (e) { /* ignore */ } }
   return out;
 }
 
-export async function laySave(pageId, layout, store = db, storage) {
+export async function laySave(pageId, layout, store = db, storage, now) {
   const ls = storage !== undefined ? storage : layStorage();
   const d = layClean(layout);
+  d.updated_at = now || new Date().toISOString();
   try { ls && ls.setItem(LAY_KEY + pageId, JSON.stringify(d)); } catch (e) { /* ignore */ }
   try { await store.put('settings', Object.assign({ id: 'layout-' + pageId }, d)); } catch (e) { /* queued or offline */ }
   return d;
@@ -70,9 +75,13 @@ function layGet(pageId) {
   return layCache[pageId];
 }
 
+const layVer = {};
+let laySaveChain = Promise.resolve();
+
 function laySet(pageId, d) {
   layCache[pageId] = d;
-  laySave(pageId, d).catch(() => {});
+  layVer[pageId] = (layVer[pageId] || 0) + 1;
+  laySaveChain = laySaveChain.then(() => laySave(pageId, d)).catch(() => {});
   layApply();
 }
 
@@ -116,7 +125,7 @@ export function layApply() {
         const name = (btn ? btn.textContent.replace(/^[▾▸]\s*/, '') : id);
         ctl.innerHTML = '<button type="button" class="lay-btn" data-lay="up" aria-label="Move ' + layEsc(name) + ' up"' + (first ? ' disabled' : '') + '>↑</button>' +
           '<button type="button" class="lay-btn" data-lay="down" aria-label="Move ' + layEsc(name) + ' down"' + (last ? ' disabled' : '') + '>↓</button>' +
-          '<button type="button" class="lay-btn" data-lay="hide" aria-pressed="' + hidden + '">' + (hidden ? 'Show' : 'Hide') + '</button>';
+          '<button type="button" class="lay-btn" data-lay="hide" aria-label="' + (hidden ? 'Show ' : 'Hide ') + layEsc(name) + '">' + (hidden ? 'Show' : 'Hide') + '</button>';
       }
     } else if (ctl) ctl.remove();
   });
@@ -155,8 +164,11 @@ function layOnClick(e) {
   } else if (t.dataset.lay && layUnlocked) {
     const secs = Array.from(document.querySelectorAll('#view section.pg-sec[data-section]'));
     const cur = d.order.length ? layApplyOrder(secs.map((s) => s.dataset.section), d) : layVisualIds(secs);
-    if (t.dataset.lay === 'hide') laySet(pageId, Object.assign({}, d, { order: cur, hidden: layToggle(d.hidden, id) }));
-    else {
+    if (t.dataset.lay === 'hide') {
+      laySet(pageId, Object.assign({}, d, { hidden: layToggle(d.hidden, id) }));
+      const hb = sec.querySelector('[data-lay="hide"]');
+      if (hb) hb.focus();
+    } else {
       laySet(pageId, Object.assign({}, d, { order: layMove(cur, id, t.dataset.lay) }));
       const nb = sec.querySelector('[data-lay="' + t.dataset.lay + '"]');
       if (nb && !nb.disabled) nb.focus(); else { const h = sec.querySelector('.pg-hd'); if (h) h.focus(); }
@@ -200,8 +212,18 @@ export function initLayout() {
   }
   onRouteChange((id) => {
     laySetLocked(true, btn);
-    layLoad(id).then((d) => { if (currentRoute() === id) { layCache[id] = d; layApply(); } }).catch(() => {});
+    layLoadInto(id);
   });
   const id = currentRoute();
-  if (id) layLoad(id).then((d) => { layCache[id] = d; layApply(); }).catch(() => {});
+  if (id) layLoadInto(id);
+}
+
+// Ignores the load result if the user edited this page's layout meanwhile.
+function layLoadInto(id) {
+  const v = layVer[id] || 0;
+  layLoad(id).then((d) => {
+    if ((layVer[id] || 0) !== v) return;
+    layCache[id] = d;
+    if (currentRoute() === id) layApply();
+  }).catch(() => {});
 }
