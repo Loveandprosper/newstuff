@@ -13,8 +13,9 @@ export async function mountWf(el, deps = {}) {
   const tail = shellSection('growth', 'Growth recommendations', shellPlaceholder()) + shellSection('repurpose', 'Repurpose', shellPlaceholder());
   el.innerHTML = head + shellSection('tasks', 'Well & Fit tasks', shellPlaceholder('Loading…')) + tail;
   const { tasks, offline } = await shellLoadTasks(d.db);
+  if (d.signal && d.signal.aborted) return;
   const list = wfOnly(tasks).map((t) => ({ ...t, attention: taskNeedsAttention(t, d.now) }));
   el.innerHTML = head + shellSection('tasks', 'Well & Fit tasks', (offline ? shellOffline() : '') + shellTaskList(list, 'No open Well & Fit tasks.')) + tail;
 }
 
-registerPage('wf', { title: 'Well & Fit', accent: 'var(--wf)', mount: (el) => mountWf(el), badge: (tasks) => badgeCount(wfOnly(tasks)) });
+registerPage('wf', { title: 'Well & Fit', accent: 'var(--wf)', mount: (el, ctx) => mountWf(el, { signal: ctx && ctx.signal }), badge: (tasks) => badgeCount(wfOnly(tasks)) });

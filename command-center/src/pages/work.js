@@ -12,8 +12,9 @@ export async function mountWork(el, deps = {}) {
   const tail = shellSection('vendors', 'Vendor list', shellPlaceholder()) + shellSection('staff', 'Staff list', shellPlaceholder());
   el.innerHTML = head + shellSection('tasks', 'Work tasks', shellPlaceholder('Loading…')) + tail;
   const { tasks, offline } = await shellLoadTasks(d.db);
+  if (d.signal && d.signal.aborted) return;
   const list = workOnly(tasks).map((t) => ({ ...t, attention: taskNeedsAttention(t, d.now) }));
   el.innerHTML = head + shellSection('tasks', 'Work tasks', (offline ? shellOffline() : '') + shellTaskList(list, 'No open work tasks.')) + tail;
 }
 
-registerPage('work', { title: 'Work', accent: 'var(--work)', mount: (el) => mountWork(el), badge: (tasks) => badgeCount(workOnly(tasks)) });
+registerPage('work', { title: 'Work', accent: 'var(--work)', mount: (el, ctx) => mountWork(el, { signal: ctx && ctx.signal }), badge: (tasks) => badgeCount(workOnly(tasks)) });

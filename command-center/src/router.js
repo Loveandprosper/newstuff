@@ -3,6 +3,8 @@ export const ROUTES = ['home', 'work', 'cards', 'health', 'wf', 'inbox'];
 
 const pages = {};
 let current = null;
+let routerCtrl = null; // aborts the previous page's in-flight mount
+let routerMounted = null;
 let onChange = [];
 
 export function parseRoute(hash) {
@@ -39,8 +41,18 @@ function render(id) {
     const el = document.getElementById('view');
     const page = pages[id];
     if (el) {
+      if (routerCtrl) routerCtrl.abort();
+      const prev = routerMounted && pages[routerMounted];
+      if (prev && typeof prev.unmount === 'function') { try { prev.unmount(); } catch (e) { /* ignore */ } }
+      routerCtrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      routerMounted = page ? id : null;
       el.innerHTML = '';
-      if (page) page.mount(el);
+      if (page) {
+        try {
+          const r = page.mount(el, { signal: routerCtrl ? routerCtrl.signal : undefined });
+          if (r && typeof r.catch === 'function') r.catch(() => {});
+        } catch (e) { /* a broken page must not break navigation */ }
+      }
       else el.textContent = 'Coming soon';
       document.title = (page ? page.title : id) + ' · Command Center';
     }

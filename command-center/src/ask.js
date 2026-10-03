@@ -35,26 +35,33 @@ function askEsc(s) {
 
 let askCtrl = null;
 
+// Runs one question; a newer call aborts this one, and a superseded call never writes to `out`.
+export async function askRun(out, sample, input) {
+  if (askCtrl) askCtrl.abort();
+  const ctrl = new AbortController();
+  askCtrl = ctrl;
+  const live = () => !ctrl.signal.aborted;
+  out.textContent = 'Thinking…';
+  try {
+    const { text } = await sample(input, {
+      signal: ctrl.signal,
+      onText: (u) => { if (live()) out.textContent = u.text; },
+    });
+    if (live()) out.textContent = text;
+  } catch (e) {
+    if (!live() || (e && e.code === 'cancelled')) return;
+    out.textContent = "Couldn't get an answer" + (e && e.message ? ': ' + e.message : '.');
+  }
+}
+
 async function askSend(dlg, pageId, q) {
   const out = dlg.querySelector('.ask-out');
   const question = String(q || '').trim();
   if (!question) return;
   const sample = await askGetSample();
   if (!sample) { out.textContent = 'Ask Claude works when this page is opened on claude.ai.'; return; }
-  if (askCtrl) askCtrl.abort();
-  askCtrl = new AbortController();
   const view = document.getElementById('view');
-  out.textContent = 'Thinking…';
-  try {
-    const { text } = await sample(askBuildInput(pageId, question, view ? view.innerText || view.textContent : ''), {
-      signal: askCtrl.signal,
-      onText: (u) => { out.textContent = u.text; },
-    });
-    out.textContent = text;
-  } catch (e) {
-    if (e && e.code === 'aborted') return;
-    out.textContent = "Couldn't get an answer" + (e && e.message ? ': ' + e.message : '.');
-  }
+  await askRun(out, sample, askBuildInput(pageId, question, view ? view.innerText || view.textContent : ''));
 }
 
 export function openAsk(pageId) {

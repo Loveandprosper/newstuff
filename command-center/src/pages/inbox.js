@@ -20,10 +20,11 @@ export async function mountInbox(el, deps = {}) {
   const d = { db, now: new Date(), ...deps };
   el.innerHTML = shellHeader('Inbox') + shellPlaceholder('Loading…');
   const { tasks, offline } = await shellLoadTasks(d.db);
+  if (d.signal && d.signal.aborted) return;
   const g = inboxGroup(tasks.map((t) => ({ ...t, attention: taskNeedsAttention(t, d.now) })));
   el.innerHTML = shellHeader('Inbox') + (offline ? shellOffline() : '') +
     shellSection('email', 'Email', shellPlaceholder('Email accounts arrive in a later update.')) +
     INBOX_CATEGORIES.map((c) => shellSection('tasks-' + c.replace(/\W+/g, '').toLowerCase(), c + ' tasks', shellTaskList(g[c], 'No open ' + c + ' tasks.'))).join('');
 }
 
-registerPage('inbox', { title: 'Inbox', accent: 'var(--inbox)', mount: (el) => mountInbox(el), badge: (tasks) => badgeCount(tasks) });
+registerPage('inbox', { title: 'Inbox', accent: 'var(--inbox)', mount: (el, ctx) => mountInbox(el, { signal: ctx && ctx.signal }), badge: (tasks) => badgeCount(tasks) });

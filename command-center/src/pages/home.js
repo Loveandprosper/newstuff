@@ -8,6 +8,11 @@ import { esc, shellDate, shellSection, shellPlaceholder, shellOffline, shellTask
 
 let homeUnsubs = [];
 
+export function homeStop() {
+  homeUnsubs.forEach((u) => { try { u(); } catch (e) { /* ignore */ } });
+  homeUnsubs = [];
+}
+
 export function homeImportant(tasks, now = new Date()) {
   const today = shellDate(now);
   return tasks.filter((t) => t && !t.done && (t.priority === 'high' || (typeof t.due === 'string' && t.due.slice(0, 10) === today)))
@@ -39,8 +44,7 @@ function homeEventsHtml(events, err) {
 
 export async function mountHome(el, deps = {}) {
   const d = { db, now: new Date(), ...deps };
-  homeUnsubs.forEach((u) => { try { u(); } catch (e) { /* ignore */ } });
-  homeUnsubs = [];
+  homeStop();
   const live = '<p class="pg-empty">Live data shows when opened on claude.ai.</p>';
   const render = (taskHtml) => {
     el.innerHTML = shellHeader('Home') + '<div class="pg-home">' +
@@ -52,9 +56,11 @@ export async function mountHome(el, deps = {}) {
   };
   render(shellPlaceholder('Loading tasks…'));
   const { tasks, offline } = await shellLoadTasks(d.db);
+  if (d.signal && d.signal.aborted) return;
   render((offline ? shellOffline() : '') + shellTaskList(homeImportant(tasks, d.now), 'No urgent tasks.'));
 
   const mcp = 'mcp' in deps ? deps.mcp : await getMcp();
+  if (d.signal && d.signal.aborted) return;
   if (!mcp) { homeSlot(el, 'weather', live); homeSlot(el, 'events', live); return; }
   let wx = {};
   homeUnsubs.push(watchWeather(mcp, (u) => { wx = u.error ? { error: u.error } : { ...wx, ...u, error: undefined }; homeSlot(el, 'weather', homeWeatherHtml(wx)); }));
@@ -64,4 +70,4 @@ export async function mountHome(el, deps = {}) {
   }));
 }
 
-registerPage('home', { title: 'Home', accent: 'var(--accent)', mount: (el) => mountHome(el), badge: () => 0 });
+registerPage('home', { title: 'Home', accent: 'var(--accent)', mount: (el, ctx) => mountHome(el, { signal: ctx && ctx.signal }), badge: () => 0, unmount: homeStop });
