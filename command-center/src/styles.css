@@ -1,0 +1,58 @@
+/* Design tokens. Dark is the default; [data-theme=light] overrides. */
+:root {
+  --bg: #0f0d17;
+  --surface: #1a1726;
+  --text: #ece9f5;
+  --muted: #8a83a0;
+  --accent: #9a7fd8;
+  --work: #2dd4bf;
+  --cards: #b794f6;
+  --health: #a3e635;
+  --wf: #fb7185;
+  --inbox: #60a5fa;
+  --alert: #f87171;
+  --done: #4ade80;
+  --font-num: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --tap: 44px;
+}
+[data-theme=light] {
+  --bg: #f4f2fa;
+  --surface: #ffffff;
+  --text: #1c1a26;
+  --muted: #625b78;
+  --accent: #6b4fb8;
+  --work: #0f766e;
+  --cards: #7c3aed;
+  --health: #4d7c0f;
+  --wf: #be123c;
+  --inbox: #1d4ed8;
+  --alert: #b91c1c;
+  --done: #15803d;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.4 var(--font-ui);
+  padding-bottom: calc(var(--tap) + 16px + env(safe-area-inset-bottom));
+}
+.num { font-family: var(--font-num); font-weight: 700; }
+#view { padding: 16px; }
+#tabs {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  display: flex; background: var(--surface);
+  min-height: var(--tap); padding-bottom: env(safe-area-inset-bottom);
+}
+#fab {
+  position: fixed; right: 16px; bottom: calc(var(--tap) + 24px + env(safe-area-inset-bottom));
+  width: 56px; height: 56px; border: 0; border-radius: 50%;
+  background: var(--accent); color: var(--bg); font-size: 28px;
+}
+@media (min-width: 900px) {
+  body { padding-bottom: 0; padding-left: 200px; }
+  #tabs { top: 0; right: auto; bottom: auto; width: 200px; flex-direction: column; }
+  #fab { bottom: 24px; }
+}
