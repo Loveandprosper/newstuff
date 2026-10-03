@@ -68,3 +68,15 @@ body {
 @media (min-width: 900px) {
   .tab { flex: none; flex-direction: row; justify-content: flex-start; gap: 12px; padding: 10px 16px; font-size: 16px; }
 }
+
+/* Quick add dialog + search results */
+#quickadd { border: 1px solid var(--border, #444); border-radius: 12px; background: var(--surface, #1b1b1f); color: inherit; max-width: 28rem; width: calc(100% - 32px); }
+.qa-form { display: flex; flex-direction: column; gap: 12px; }
+.qa-form input { min-height: var(--tap); font-size: 16px; padding: 0 12px; }
+.qa-chips, .qa-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.qa-chip, .qa-actions button { min-height: var(--tap); min-width: var(--tap); padding: 0 16px; font-size: 14px; }
+.qa-chip[aria-pressed="true"] { outline: 2px solid currentColor; font-weight: 700; }
+.qa-meta, .qa-status { font-size: 12px; margin: 0; min-height: 1em; }
+#search-results { position: absolute; left: 0; right: 0; top: 100%; background: var(--surface, #1b1b1f); max-height: 50vh; overflow: auto; z-index: 5; }
+.search-hit { padding: 12px 16px; min-height: var(--tap); font-size: 14px; }
+.search-coll { font-size: 12px; opacity: .8; text-transform: uppercase; margin-right: 6px; }
